@@ -49,6 +49,7 @@ const IssueForm = ({ issue }: { issue?: Isssue }) => {
         await axios.patch("/api/issues/" + issue.id, { ...data, status });
       else await axios.post("/api/issues", { ...data, status });
       router.push("/issues");
+      router.refresh();
     } catch (error) {
       setSubmitting(false);
       setError("An unexpected error occured.");
@@ -81,7 +82,7 @@ const IssueForm = ({ issue }: { issue?: Isssue }) => {
           )}
         />
         <ErrorMessage>{errors.description?.message}</ErrorMessage>
-        <Grid columns="1" gap="3" width="10rem">
+        <Grid columns="1" gap="5" width="10rem">
           {issue && (
             <DropdownMenu.Root>
               <DropdownMenu.Trigger>
