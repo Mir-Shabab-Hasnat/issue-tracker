@@ -19,6 +19,7 @@ import { z } from "zod";
 import ErrorMessage from "@/app/components/ErrorMessage";
 import Spinner from "@/app/components/Spinner";
 import { Isssue } from "@prisma/client";
+import { CheckIcon } from "@radix-ui/react-icons";
 
 type IssueFormData = z.infer<typeof issueSchema>;
 type StatusType = "OPEN" | "IN_PROGRESS" | "CLOSED" | undefined;
@@ -100,7 +101,7 @@ const IssueForm = ({ issue }: { issue?: Isssue }) => {
                   <DropdownMenu.RadioItem value="OPEN">
                     Open
                   </DropdownMenu.RadioItem>
-                  <DropdownMenu.RadioItem value="CLOSED">
+                  <DropdownMenu.RadioItem value="IN_PROGRESS">
                     In Progress
                   </DropdownMenu.RadioItem>
                 </DropdownMenu.RadioGroup>
