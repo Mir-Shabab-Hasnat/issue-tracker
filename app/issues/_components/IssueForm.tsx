@@ -1,6 +1,12 @@
 "use client";
 
-import { Button, Callout, Text, TextField } from "@radix-ui/themes";
+import {
+  Button,
+  Callout,
+  DropdownMenu,
+  Grid,
+  TextField,
+} from "@radix-ui/themes";
 import SimpleMDE from "react-simplemde-editor";
 import { useForm, Controller } from "react-hook-form";
 import "easymde/dist/easymde.min.css";
@@ -15,6 +21,7 @@ import Spinner from "@/app/components/Spinner";
 import { Isssue } from "@prisma/client";
 
 type IssueFormData = z.infer<typeof issueSchema>;
+type StatusType = "OPEN" | "IN_PROGRESS" | "CLOSED" | undefined;
 
 interface Props {
   issue?: Isssue;
@@ -32,12 +39,14 @@ const IssueForm = ({ issue }: { issue?: Isssue }) => {
   });
   const [error, setError] = useState("");
   const [isSubmmiting, setSubmitting] = useState(false);
+  const [status, setStatus] = useState<StatusType>(issue?.status);
 
   const onSubmit = handleSubmit(async (data) => {
     try {
       setSubmitting(true);
-      if (issue) await axios.patch("/api/issues/" + issue.id, data);
-      else await axios.post("/api/issues", data);
+      if (issue)
+        await axios.patch("/api/issues/" + issue.id, { ...data, status });
+      else await axios.post("/api/issues", { ...data, status });
       router.push("/issues");
     } catch (error) {
       setSubmitting(false);
@@ -71,10 +80,38 @@ const IssueForm = ({ issue }: { issue?: Isssue }) => {
           )}
         />
         <ErrorMessage>{errors.description?.message}</ErrorMessage>
-        <Button disabled={isSubmmiting}>
-          {issue ? "Update Issue" : "Submit New Issue"}{" "}
-          {isSubmmiting && <Spinner />}
-        </Button>
+        <Grid columns="1" gap="3" width="10rem">
+          {issue && (
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
+                <Button variant="soft">
+                  Change Status
+                  <DropdownMenu.TriggerIcon />
+                </Button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content>
+                <DropdownMenu.RadioGroup
+                  value={status}
+                  onValueChange={(value) => setStatus(value as StatusType)}
+                >
+                  <DropdownMenu.RadioItem value={"CLOSED"}>
+                    Closed
+                  </DropdownMenu.RadioItem>
+                  <DropdownMenu.RadioItem value="OPEN">
+                    Open
+                  </DropdownMenu.RadioItem>
+                  <DropdownMenu.RadioItem value="CLOSED">
+                    In Progress
+                  </DropdownMenu.RadioItem>
+                </DropdownMenu.RadioGroup>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+          )}
+          <Button disabled={isSubmmiting}>
+            {issue ? "Update Issue" : "Submit New Issue"}{" "}
+            {isSubmmiting && <Spinner />}
+          </Button>
+        </Grid>
       </form>
     </div>
   );
