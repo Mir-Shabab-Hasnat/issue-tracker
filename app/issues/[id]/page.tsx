@@ -44,6 +44,8 @@ const IssueDetailPage = async ({ params }: Props) => {
   );
 };
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({ params }: Props) {
   const issue = await fetchUser(parseInt(params.id));
 
